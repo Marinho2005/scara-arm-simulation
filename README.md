@@ -12,7 +12,39 @@ Projeto ROS 2 para visualizar e simular um braco SCARA com garra de dois dedos. 
 - Terminator
 - Conexao com a internet durante a instalacao das dependencias
 
-Os comandos abaixo usam Zsh, que e o shell configurado neste computador. Abra os terminais novos pelo Terminator para reproduzir os passos.
+Os comandos abaixo aparecem na versao Zsh, que e o shell configurado neste computador. Se voce usa Bash, veja a secao [Usando Bash](#usando-bash) antes de comecar: a unica diferenca pratica e trocar `setup.zsh` por `setup.bash`. Abra os terminais novos pelo Terminator para reproduzir os passos.
+
+## Usando Bash
+
+Se o seu shell padrao e Bash, ou se o professor usa Bash, o roteiro e o mesmo. Confirme o shell com:
+
+```bash
+echo $SHELL
+```
+
+Se aparecer `/bin/bash`, esta tudo certo. Se aparecer `/usr/bin/zsh`, digite `bash` na aba antes de rodar os comandos:
+
+```bash
+bash
+```
+
+Regra principal: em Bash use sempre os arquivos `setup.bash`, nunca `setup.zsh`.
+
+| Zsh (comandos deste README) | Bash (equivalente) |
+| --- | --- |
+| `source /opt/ros/humble/setup.zsh` | `source /opt/ros/humble/setup.bash` |
+| `source ~/scara_ws/install/setup.zsh` | `source ~/scara_ws/install/setup.bash` |
+| `source install/setup.zsh` | `source install/setup.bash` |
+
+Para carregar o ambiente em Bash, use:
+
+```bash
+unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH
+source /opt/ros/humble/setup.bash
+source ~/scara_ws/install/setup.bash
+```
+
+Os demais comandos (`apt`, `git`, `rosdep`, `colcon`, `ros2 launch` e `python3`) sao identicos nos dois shells.
 
 ## Instalar ferramentas
 
@@ -34,6 +66,7 @@ Crie as pastas e clone o repositorio de origem:
 mkdir -p ~/scara_ws/src
 cd ~/scara_ws/src
 git clone https://github.com/Marinho2005/scara-arm-simulation
+```
 
 Se o codigo ja estiver em `~/scara_ws/src/scara-arm-simulation`, nao clone de novo. Va direto para a instalacao das dependencias.
 
@@ -46,6 +79,8 @@ unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH
 source /opt/ros/humble/setup.zsh
 cd ~/scara_ws
 ```
+
+No Bash, troque o primeiro `source` por `source /opt/ros/humble/setup.bash`.
 
 Inicialize o rosdep somente se ainda nao tiver sido inicializado neste computador. Se `sudo rosdep init` disser que ja existe uma configuracao, ignore essa mensagem e continue:
 
@@ -66,6 +101,8 @@ O resultado esperado do build e `Summary: 2 packages finished`. Sempre que abrir
 ## Rodar no Terminator
 
 Abra o Terminator pelo menu de aplicativos. Crie tres abas com `Ctrl+Shift+T`. Rode um bloco de comandos por aba e mantenha as tres abertas. Em cada aba, primeiro carregue o ambiente:
+
+Se voce usa Bash e o shell padrao do computador e Zsh, digite `bash` em cada aba antes de carregar o ambiente (ou use o bloco de Bash da secao [Usando Bash](#usando-bash)).
 
 ```zsh
 unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH
@@ -121,6 +158,10 @@ source /opt/ros/humble/setup.zsh
 source ~/scara_ws/install/setup.zsh
 ```
 
+No Bash, use `source /opt/ros/humble/setup.bash` e `source ~/scara_ws/install/setup.bash`.
+
+**Estou no Bash e os comandos com `setup.zsh` falham:** confirme que voce digitou `bash` na aba e troque todos os `setup.zsh` por `setup.bash`. Nao misture os dois arquivos no mesmo terminal.
+
 **O pacote nao aparece depois de alterar o codigo:** pare os nos com `Ctrl+C`, compile novamente a partir da raiz do workspace e carregue o overlay:
 
 ```zsh
@@ -128,6 +169,8 @@ cd ~/scara_ws
 colcon build --symlink-install
 source install/setup.zsh
 ```
+
+No Bash, o ultimo comando e `source install/setup.bash`.
 
 **Gazebo ou controladores ja estavam abertos durante o build:** encerre as instancias antigas e inicie novamente as abas 1 e 2. Um processo em execucao nao carrega automaticamente as alteracoes feitas nos arquivos.
 
