@@ -2,7 +2,7 @@
 
 Projeto ROS 2 para visualizar e simular um braco SCARA com garra de dois dedos. A demonstracao move o braco suavemente, fecha a garra durante a descida e retorna ao ponto inicial. Ela e apenas gestual: nao ha uma bola ou outro objeto sendo agarrado.
 
-
+Este roteiro usa **Bash**. A unica diferenca em relacao ao Zsh e trocar `setup.bash` por `setup.zsh` nos comandos de `source`. Todo o resto e identico.
 
 ## Requisitos
 
@@ -12,31 +12,67 @@ Projeto ROS 2 para visualizar e simular um braco SCARA com garra de dois dedos. 
 - Terminator
 - Conexao com a internet durante a instalacao das dependencias
 
-Os comandos abaixo aparecem na versao Zsh, que e o shell configurado neste computador. Se voce usa Bash, veja a secao [Usando Bash](#usando-bash) antes de comecar: a unica diferenca pratica e trocar `setup.zsh` por `setup.bash`. Abra os terminais novos pelo Terminator para reproduzir os passos.
+Se ainda nao tiver ROS 2 Humble Desktop, siga primeiro o guia oficial de instalacao para Ubuntu 22.04:
+https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
 
-## Usando Bash
-
-Se o seu shell padrao e Bash, ou se o professor usa Bash, o roteiro e o mesmo. Confirme o shell com:
+## Passo 0: confirme que esta no Bash
 
 ```bash
 echo $SHELL
 ```
 
-Se aparecer `/bin/bash`, esta tudo certo. Se aparecer `/usr/bin/zsh`, digite `bash` na aba antes de rodar os comandos:
+Se aparecer `/bin/bash`, siga em frente. Se aparecer `/usr/bin/zsh`, digite `bash` na aba antes de rodar os comandos:
 
 ```bash
 bash
 ```
 
-Regra principal: em Bash use sempre os arquivos `setup.bash`, nunca `setup.zsh`.
+## Passo 1: instalar as ferramentas
 
-| Zsh (comandos deste README) | Bash (equivalente) |
-| --- | --- |
-| `source /opt/ros/humble/setup.zsh` | `source /opt/ros/humble/setup.bash` |
-| `source ~/scara_ws/install/setup.zsh` | `source ~/scara_ws/install/setup.bash` |
-| `source install/setup.zsh` | `source install/setup.bash` |
+```bash
+sudo apt update
+sudo apt install terminator python3-colcon-common-extensions python3-rosdep
+```
 
-Para carregar o ambiente em Bash, use:
+## Passo 2: criar o workspace e baixar o codigo
+
+```bash
+mkdir -p ~/scara_ws/src
+cd ~/scara_ws/src
+git clone https://github.com/Marinho2005/scara-arm-simulation
+```
+
+Se o codigo ja estiver em `~/scara_ws/src/scara-arm-simulation`, nao clone de novo. Va direto para o passo 3.
+
+## Passo 3: instalar as dependencias e compilar
+
+```bash
+unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH
+source /opt/ros/humble/setup.bash
+cd ~/scara_ws
+```
+
+Inicialize o rosdep somente se ainda nao tiver sido inicializado neste computador. Se `sudo rosdep init` disser que ja existe uma configuracao, ignore a mensagem e continue:
+
+```bash
+sudo rosdep init
+rosdep update
+```
+
+Instale as dependencias declaradas pelos pacotes e compile:
+
+```bash
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+```
+
+O resultado esperado do build e `Summary: 2 packages finished`.
+
+## Passo 4: rodar no Terminator
+
+Abra o Terminator pelo menu de aplicativos e crie tres abas com `Ctrl+Shift+T`.
+
+Em **cada aba**, carregue o ambiente:
 
 ```bash
 unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH
@@ -44,77 +80,11 @@ source /opt/ros/humble/setup.bash
 source ~/scara_ws/install/setup.bash
 ```
 
-Os demais comandos (`apt`, `git`, `rosdep`, `colcon`, `ros2 launch` e `python3`) sao identicos nos dois shells.
-
-## Instalar ferramentas
-
-Se ROS 2 Humble ja estiver instalado, abra um terminal e instale as ferramentas usadas pelo workspace:
-
-```zsh
-sudo apt update
-sudo apt install terminator python3-colcon-common-extensions python3-rosdep
-```
-
-Se ainda nao tiver ROS 2 Humble Desktop, siga primeiro o guia oficial de instalacao para Ubuntu 22.04:
-https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
-
-## Criar o workspace e baixar o codigo
-
-Crie as pastas e clone o repositorio de origem:
-
-```zsh
-mkdir -p ~/scara_ws/src
-cd ~/scara_ws/src
-git clone https://github.com/Marinho2005/scara-arm-simulation
-```
-
-Se o codigo ja estiver em `~/scara_ws/src/scara-arm-simulation`, nao clone de novo. Va direto para a instalacao das dependencias.
-
-## Instalar dependencias e compilar
-
-Execute no mesmo terminal:
-
-```zsh
-unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH
-source /opt/ros/humble/setup.zsh
-cd ~/scara_ws
-```
-
-No Bash, troque o primeiro `source` por `source /opt/ros/humble/setup.bash`.
-
-Inicialize o rosdep somente se ainda nao tiver sido inicializado neste computador. Se `sudo rosdep init` disser que ja existe uma configuracao, ignore essa mensagem e continue:
-
-```zsh
-sudo rosdep init
-rosdep update
-```
-
-Instale as dependencias declaradas pelos pacotes e compile:
-
-```zsh
-rosdep install --from-paths src --ignore-src -r -y
-colcon build --symlink-install
-```
-
-O resultado esperado do build e `Summary: 2 packages finished`. Sempre que abrir uma nova aba do Terminator, carregue o ROS e o workspace com os comandos da proxima secao.
-
-## Rodar no Terminator
-
-Abra o Terminator pelo menu de aplicativos. Crie tres abas com `Ctrl+Shift+T`. Rode um bloco de comandos por aba e mantenha as tres abertas. Em cada aba, primeiro carregue o ambiente:
-
-Se voce usa Bash e o shell padrao do computador e Zsh, digite `bash` em cada aba antes de carregar o ambiente (ou use o bloco de Bash da secao [Usando Bash](#usando-bash)).
-
-```zsh
-unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH
-source /opt/ros/humble/setup.zsh
-source ~/scara_ws/install/setup.zsh
-```
-
 ### Aba 1: Gazebo
 
-Na primeira aba, inicie o mundo e espere o Gazebo abrir e o robo aparecer:
+Inicie o mundo e espere o Gazebo abrir e o robo aparecer:
 
-```zsh
+```bash
 ros2 launch scara_description gazebo.launch.py
 ```
 
@@ -122,7 +92,7 @@ ros2 launch scara_description gazebo.launch.py
 
 Depois que o robo aparecer no Gazebo, use a segunda aba:
 
-```zsh
+```bash
 ros2 launch scara_controller controller.launch.py
 ```
 
@@ -132,7 +102,7 @@ Espere os controladores `arm_controller` e `gripper_controller` informarem que e
 
 Quando o Gazebo e os controladores estiverem rodando, use a terceira aba:
 
-```zsh
+```bash
 /usr/bin/python3 ~/scara_ws/src/scara-arm-simulation/demo.py
 ```
 
@@ -140,11 +110,11 @@ A garra abre, o braco desce e fecha a garra como se pegasse algo, sobe e volta a
 
 Para encerrar, pressione `Ctrl+C` nas abas da demonstracao, dos controladores e do Gazebo.
 
-## Visualizar no RViz
+## Passo 5: visualizar no RViz (opcional)
 
-O RViz com sliders e uma visualizacao separada do Gazebo. Carregue o ambiente em uma aba e rode:
+O RViz com sliders e uma visualizacao separada do Gazebo. Carregue o ambiente em uma aba, como no passo 4, e rode:
 
-```zsh
+```bash
 ros2 launch scara_description scara.launch.py
 ```
 
@@ -152,25 +122,21 @@ ros2 launch scara_description scara.launch.py
 
 **`Package not found` ou `ros2: command not found`:** recarregue o ambiente na aba atual:
 
-```zsh
+```bash
 unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH
-source /opt/ros/humble/setup.zsh
-source ~/scara_ws/install/setup.zsh
+source /opt/ros/humble/setup.bash
+source ~/scara_ws/install/setup.bash
 ```
 
-No Bash, use `source /opt/ros/humble/setup.bash` e `source ~/scara_ws/install/setup.bash`.
-
-**Estou no Bash e os comandos com `setup.zsh` falham:** confirme que voce digitou `bash` na aba e troque todos os `setup.zsh` por `setup.bash`. Nao misture os dois arquivos no mesmo terminal.
+**Comandos com `setup.zsh` falham:** confirme que voce digitou `bash` na aba e troque todos os `setup.zsh` por `setup.bash`. Nao misture os dois arquivos no mesmo terminal.
 
 **O pacote nao aparece depois de alterar o codigo:** pare os nos com `Ctrl+C`, compile novamente a partir da raiz do workspace e carregue o overlay:
 
-```zsh
+```bash
 cd ~/scara_ws
 colcon build --symlink-install
-source install/setup.zsh
+source install/setup.bash
 ```
-
-No Bash, o ultimo comando e `source install/setup.bash`.
 
 **Gazebo ou controladores ja estavam abertos durante o build:** encerre as instancias antigas e inicie novamente as abas 1 e 2. Um processo em execucao nao carrega automaticamente as alteracoes feitas nos arquivos.
 
