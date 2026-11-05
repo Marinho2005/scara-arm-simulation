@@ -1,5 +1,7 @@
 # SCARA Arm Simulation
 
+**Discentes:** João Vitor Ramos Burgos, Victor Marinho Borges da Silva Lima
+
 Projeto ROS 2 para visualizar e simular um braco SCARA com garra de dois dedos. A demonstracao move o braco suavemente, fecha a garra durante a descida e retorna ao ponto inicial. Ela e apenas gestual: nao ha uma bola ou outro objeto sendo agarrado.
 
 Este roteiro usa **Bash**. A unica diferenca em relacao ao Zsh e trocar `setup.bash` por `setup.zsh` nos comandos de `source`. Todo o resto e identico.
